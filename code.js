@@ -59,7 +59,7 @@ var firebaseConfig = {
     var trainTime = childSnapshot.val().start;
     var frequency = childSnapshot.val().rate;
   
-    // train Info
+    // Train Info
     console.log(trainName);
     console.log(dest);
     console.log(trainTime);
@@ -67,7 +67,7 @@ var firebaseConfig = {
 
 
     // Moment calculations
-        
+
     var trainConverted = moment(trainTime, "HH:mm").subtract(1, "years");
     var diffTime = moment().diff(moment(trainConverted), "minutes");
     var remainder = diffTime % frequency;
@@ -91,11 +91,5 @@ var firebaseConfig = {
     $("#train-table > tbody").append(newRow);
   });
   
-  // Example Time Math
-  // -----------------------------------------------------------------------------
-  // Assume train start date of January 1, 2015
-  // Assume current date is March 1, 2016
-  
-  // We know that this is 15 months.
-  // Now we will create code in moment.js to confirm that any attempt we use meets this test case
+
   
