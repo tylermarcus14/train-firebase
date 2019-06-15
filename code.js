@@ -69,13 +69,11 @@ var firebaseConfig = {
     // Moment calculations
         
     var trainConverted = moment(trainTime, "HH:mm").subtract(1, "years");
-    console.log(trainConverted);
     var diffTime = moment().diff(moment(trainConverted), "minutes");
-    console.log("Difference: " + diffTime);
     var remainder = diffTime % frequency;
     var minutesAway =  frequency - remainder;
     var nextArrival = moment().add(minutesAway, "minutes").format("HH:mm");
-    // var firstTrainFormatted = moment(trainTime, "HH:mm").format("HH:mm");
+    var firstTrain = moment(trainTime, "HH:mm").format("HH:mm");
 
   
     // Create the new row
@@ -83,6 +81,7 @@ var firebaseConfig = {
       $("<td>").text(trainName),
       $("<td>").text(dest),
       $("<td>").text(frequency),
+      $("<td>").text(firstTrain),
       $("<td>").text(nextArrival),
       $("<td>").text(minutesAway),
 
