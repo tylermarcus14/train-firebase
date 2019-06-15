@@ -7,12 +7,12 @@ var firebaseConfig = {
     storageBucket: "train-times-27d45.appspot.com",
     messagingSenderId: "541582978591",
     appId: "1:541582978591:web:f84b63894bfb4323"
-};
+    };
 
   // Initialize Firebase
   firebase.initializeApp(firebaseConfig);
 
-  var data = firebase.database();
+  var database = firebase.database();
 
   $("#add-train-btn").on("click", function(event) {
     event.preventDefault();
@@ -23,7 +23,7 @@ var firebaseConfig = {
     var trainTime = moment($("#trainTime").val().trim(), "HH:mm").format("HH:mm");
     var frequency = $("#frequency").val().trim();
   
-    // Creates local "temporary" object for holding employee data
+    // Creates local "temporary" object for holding train data
     var newTrain = {
       name: trainName,
       dest: dest,
@@ -31,7 +31,7 @@ var firebaseConfig = {
       rate: frequency
     };
   
-    // Uploads employee data to the database
+    // Uploads train data to the database
     database.ref().push(newTrain);
   
     // Logs everything to console
@@ -49,7 +49,7 @@ var firebaseConfig = {
     $("#frequency").val("");
   });
   
-  // 3. Create Firebase event for adding employee to the database and a row in the html when a user adds an entry
+  // 3. Create Firebase event for adding train to the database and a row in the html when a user adds an entry
   database.ref().on("child_added", function(childSnapshot) {
     console.log(childSnapshot.val());
   
@@ -59,30 +59,33 @@ var firebaseConfig = {
     var trainTime = childSnapshot.val().start;
     var frequency = childSnapshot.val().rate;
   
-    // Employee Info
+    // train Info
     console.log(trainName);
     console.log(dest);
     console.log(trainTime);
     console.log(frequency);
-  
-    // Prettify the employee start
-    var trainTimePretty = moment.unix(trainTime).format("MM/DD/YYYY");
-  
-    // Calculate the months worked using hardcore math
-    // To calculate the months worked
-    var empMonths = moment().diff(moment(trainTime, "X"), "months");
-    console.log(empMonths);
-  
-    // Calculate the total billed rate
-    var empBilled = empMonths * frequency;
-    console.log(empBilled);
+
+
+    // Moment calculations
+        
+    var trainConverted = moment(trainTime, "HH:mm").subtract(1, "years");
+    console.log(trainConverted);
+    var diffTime = moment().diff(moment(trainConverted), "minutes");
+    console.log("Difference: " + diffTime);
+    var remainder = diffTime % frequency;
+    var minutesAway =  frequency - remainder;
+    var nextArrival = moment().add(minutesAway, "minutes").format("HH:mm");
+    // var firstTrainFormatted = moment(trainTime, "HH:mm").format("HH:mm");
+
   
     // Create the new row
     var newRow = $("<tr>").append(
       $("<td>").text(trainName),
       $("<td>").text(dest),
-      $("<td>").text(trainTimePretty),
       $("<td>").text(frequency),
+      $("<td>").text(nextArrival),
+      $("<td>").text(minutesAway),
+
     );
   
     // Append the new row to the table
@@ -91,7 +94,7 @@ var firebaseConfig = {
   
   // Example Time Math
   // -----------------------------------------------------------------------------
-  // Assume Employee start date of January 1, 2015
+  // Assume train start date of January 1, 2015
   // Assume current date is March 1, 2016
   
   // We know that this is 15 months.
